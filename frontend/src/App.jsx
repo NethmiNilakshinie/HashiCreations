@@ -219,6 +219,7 @@ function App() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   const whatsappNumber = "94763924953"; 
   const categories = ['All', 'Resin Art Creations', 'Wedding Ring Holders', 'Flower Bunch', 'Flower Vase', 'Teddy Bears', 'Birthday Packages', 'Gift Box'];
@@ -245,7 +246,7 @@ function App() {
     setFilteredProducts(cat === 'All' ? products : products.filter(p => p.category === cat));
   };
 
-  const goToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  const goToTop = () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setIsMenuOpen(false); };
 
   // --- Wrapper to handle Navbar visibility ---
   const LayoutWrapper = ({ children }) => {
@@ -256,33 +257,54 @@ function App() {
       <div className="min-h-screen bg-[#0f051d] font-sans text-gray-200 scroll-smooth">
         {/* Navbar: Only show if NOT admin */}
         {!isAdmin && (
-          <nav className="w-full py-4 px-8 md:px-12 flex justify-between items-center bg-[#1a0b2e]/60 backdrop-blur-xl sticky top-0 z-[100] border-b border-purple-500/10">
-            <div className="flex items-center gap-4">
+          <nav className="w-full py-4 px-6 md:px-12 flex justify-between items-center bg-[#1a0b2e]/60 backdrop-blur-xl sticky top-0 z-[100] border-b border-purple-500/10">
+            <div className="flex items-center gap-3 md:gap-4">
               <Link to="/" onClick={goToTop}><img src="/logo.jpeg" className="h-10 w-10 md:h-12 md:w-12 rounded-full border border-[#d4b5a3]/30" alt="Logo" /></Link>
-              <h1 className="text-sm md:text-xl font-bold tracking-[0.4em] text-[#d4b5a3] uppercase">HASHI CREATIONS</h1>
+              <h1 className="text-[10px] md:text-xl font-bold tracking-[0.2em] md:tracking-[0.4em] text-[#d4b5a3] uppercase truncate">HASHI CREATIONS</h1>
             </div>
-            <div className="flex items-center gap-8">
+
+            <div className="flex items-center gap-4 md:gap-8">
+              {/* Desktop Menu - Order Fixed to: Home, About, Collection */}
               <div className="hidden md:flex items-center space-x-8 text-[10px] font-black tracking-[0.2em] uppercase">
-                {/* 1. HOME */}
                 <Link to="/" onClick={goToTop} className="text-white hover:text-[#d4b5a3]">Home</Link>
-                
-                {/* 2. ABOUT (පේජ් එකේ දෙවැනියට තියෙන සෙක්ෂන් එක නිසා) */}
-                <Link to="/" onClick={() => setTimeout(() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }), 100)} className="text-gray-400 hover:text-white">About</Link>
-                
-                {/* 3. COLLECTION (පේජ් එකේ අවසානයට තියෙන සෙක්ෂන් එක නිසා) */}
-                <Link to="/" onClick={() => setTimeout(() => document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' }), 100)} className="text-gray-400 hover:text-white">Collection</Link>
+                <Link to="/" onClick={() => { setIsMenuOpen(false); setTimeout(() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="text-gray-400 hover:text-white">About</Link>
+                <Link to="/" onClick={() => { setIsMenuOpen(false); setTimeout(() => document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="text-gray-400 hover:text-white">Collection</Link>
               </div>
+
+              {/* Cart Button */}
               <button onClick={() => setIsCartOpen(true)} className="relative p-2 text-[#d4b5a3]">
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                 {cart.length > 0 && <span className="absolute top-0 right-0 bg-red-500 text-white text-[8px] font-bold w-4 h-4 flex items-center justify-center rounded-full">{cart.length}</span>}
               </button>
+
+              {/* Mobile Menu Toggle */}
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden text-[#d4b5a3] p-1">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {isMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
             </div>
+
+            {/* Mobile Sidebar Menu - Order Fixed to: Home, About, Collection */}
+            <div className={`fixed inset-y-0 left-0 w-64 bg-[#0f051d] z-[120] transform ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out md:hidden border-r border-purple-500/20 shadow-2xl`}>
+              <div className="p-8 flex flex-col gap-8">
+                <h2 className="text-[#d4b5a3] font-black tracking-widest uppercase border-b border-purple-500/10 pb-4">Menu</h2>
+                <Link to="/" onClick={goToTop} className="text-sm font-bold tracking-widest uppercase hover:text-[#d4b5a3]">Home</Link>
+                <Link to="/" onClick={() => { setIsMenuOpen(false); setTimeout(() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="text-sm font-bold tracking-widest uppercase hover:text-[#d4b5a3]">About</Link>
+                <Link to="/" onClick={() => { setIsMenuOpen(false); setTimeout(() => document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="text-sm font-bold tracking-widest uppercase hover:text-[#d4b5a3]">Collection</Link>
+              </div>
+            </div>
+            {isMenuOpen && <div className="fixed inset-0 bg-black/60 z-[115] md:hidden" onClick={() => setIsMenuOpen(false)}></div>}
           </nav>
         )}
 
         {children}
 
-        {/* Footer */}
+        {/* Footer: Always show */}
         <footer className="bg-[#0b0414] pt-24 pb-12 border-t border-purple-500/10 relative overflow-hidden">
           <div className="max-w-7xl mx-auto px-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
@@ -298,7 +320,6 @@ function App() {
                 <h4 className="text-white text-[10px] font-black uppercase tracking-[0.4em] border-l-2 border-[#d4b5a3] pl-4">Explore</h4>
                 <ul className="space-y-4 text-[10px] uppercase tracking-[0.2em] font-bold">
                   <li><Link to="/" onClick={goToTop} className="text-gray-500 hover:text-white">Home</Link></li>
-                  {/* Footer එකෙත් About/Collection පිළිවෙල වෙනස් කළා */}
                   <li><a href="#about" className="text-gray-500 hover:text-white">Our Story</a></li>
                   <li><a href="#collection" className="text-gray-500 hover:text-white">The Gallery</a></li>
                 </ul>
